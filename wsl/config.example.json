@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "providers": [
+    { "id": "claude", "enabled": true, "source": "oauth" },
+    { "id": "codex", "enabled": true, "source": "auto" },
+    { "id": "antigravity", "enabled": true, "source": "auto" },
+    { "id": "opencodego", "enabled": true, "source": "auto" },
+    { "id": "copilot", "enabled": true, "source": "api" }
+  ]
+}

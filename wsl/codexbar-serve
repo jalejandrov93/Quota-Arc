@@ -1,0 +1,31 @@
+#!/usr/bin/env bash
+# Starts the CodexBar HTTP server that the Windows Quota Arc app reads in
+# remote mode. Installed to ~/.local/bin/codexbar-serve by wsl/install.sh.
+set -euo pipefail
+
+# Copilot usage needs a GitHub token; reuse the gh CLI session when available.
+if [[ -z "${COPILOT_API_TOKEN:-}" ]] && command -v gh >/dev/null 2>&1; then
+  COPILOT_API_TOKEN="$(gh auth token 2>/dev/null || true)"
+  export COPILOT_API_TOKEN
+fi
+
+# The web dashboard snapshot requires a bearer token; keep it in an owner-only file.
+token_file="$HOME/.config/codexbar/dashboard-token"
+if [[ -z "${CODEXBAR_DASHBOARD_TOKEN:-}" && -s "$token_file" ]]; then
+  CODEXBAR_DASHBOARD_TOKEN="$(<"$token_file")"
+  export CODEXBAR_DASHBOARD_TOKEN
+fi
+
+if [[ -x "$HOME/.local/bin/codexbar" ]]; then
+  codexbar_bin="$HOME/.local/bin/codexbar"
+elif codexbar_bin="$(command -v codexbar 2>/dev/null)"; then
+  :
+else
+  echo "codexbar-serve: codexbar not found; run wsl/install.sh first" >&2
+  exit 127
+fi
+
+exec "$codexbar_bin" serve \
+  --port "${CODEXBAR_PORT:-8787}" \
+  --refresh-interval "${CODEXBAR_REFRESH_INTERVAL:-60}" \
+  "$@"

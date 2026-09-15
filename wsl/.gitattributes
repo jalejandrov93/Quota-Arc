@@ -1,0 +1,2 @@
+# Scripts and units run inside WSL; keep LF even on Windows clones with core.autocrlf=true.
+* text eol=lf

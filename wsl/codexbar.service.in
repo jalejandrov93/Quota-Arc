@@ -1,0 +1,19 @@
+# Template rendered by wsl/install.sh into ~/.config/codexbar/codexbar.service.
+# Installed as a system unit because systemctl --user cannot reach the user
+# bus under WSLg.
+[Unit]
+Description=CodexBar usage server for the Quota Arc Windows app
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=@USER@
+Environment="HOME=@HOME@"
+Environment="PATH=@PATH@"
+ExecStart="@HOME@/.local/bin/codexbar-serve"
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=multi-user.target
