@@ -216,8 +216,10 @@ internal sealed class UsageStore
         UsageProviderException { Kind: UsageErrorKind.AccessDenied } => new ProviderStatus.AccessDenied(),
         UsageProviderException { Kind: UsageErrorKind.NothingMetered, Message: var why } =>
             new ProviderStatus.Unsupported(why),
-        UsageProviderException { Kind: UsageErrorKind.BadResponse, Status: var code } =>
-            new ProviderStatus.Error($"HTTP {code}"),
+        // BadResponse(status) already reads "HTTP {status}"; a provider with a
+        // better explanation (CodexBar unreachable, its own error) keeps it.
+        UsageProviderException { Kind: UsageErrorKind.BadResponse, Message: var why } =>
+            new ProviderStatus.Error(why),
         _ => new ProviderStatus.Error(error.Message)
     };
 
@@ -325,5 +327,5 @@ internal sealed class UsageStore
 
     private static ProviderSnapshot Placeholder(IUsageProvider provider) =>
         new(provider.Id, provider.DisplayName, provider.Glyph, Fidelity.Official,
-            new ProviderStatus.Stale(DateTime.MinValue), []);
+            new ProviderStatus.Stale(DateTime.MinValue), [], IsRemote: provider.IsRemote);
 }

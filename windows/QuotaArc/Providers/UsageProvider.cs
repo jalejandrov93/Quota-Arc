@@ -10,6 +10,8 @@ internal interface IUsageProvider
     Task<ProviderSnapshot> FetchSnapshotAsync();
     ProviderAccount? Account();
     SignInRoute SignInRoute { get; }
+    /// True when the reading comes from CodexBar rather than this machine.
+    bool IsRemote => false;
     Task SignOutAsync() => Task.CompletedTask;
     void ForgetCachedCredential() { }
 }

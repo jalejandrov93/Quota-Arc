@@ -74,7 +74,8 @@ internal sealed record ProviderSnapshot(
     ProviderStatus Status,
     IReadOnlyList<LimitWindow> Windows,
     string? HeadlineId = null,
-    UsageBlock? Block = null)
+    UsageBlock? Block = null,
+    bool IsRemote = false)
 {
     public LimitWindow? Headline
     {
@@ -120,6 +121,8 @@ internal sealed record ProviderSnapshot(
 
     private string AuthPrompt => Id switch
     {
+        // Remote accounts live in WSL, so no Windows app can fix the sign-in.
+        _ when IsRemote => $"Sign in to {DisplayName} inside WSL to read your usage",
         "claude" => ClaudeDesktop.IsPresent()
             ? $"Open Claude so {AppBranding.Name} can read your usage"
             : "Sign in to Claude Code to read your usage",

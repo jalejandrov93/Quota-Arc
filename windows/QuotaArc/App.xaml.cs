@@ -74,13 +74,19 @@ public partial class App : Application
             var profiles = ClaudeProfile.Discover();
             Log.Info("claude profiles: " + string.Join(", ", profiles.Select(p => p.DisplayPath)));
 
-            var store = new UsageStore(
-                profiles.Select(p => (IUsageProvider)new ClaudeOAuthProvider(p))
+            var codexBar = CodexBarSettings.Load();
+            var providers = codexBar.Enabled
+                ? RemoteUsageProvider.ForSettings(codexBar, TimeSpan.FromSeconds(2))
+                : profiles.Select(p => (IUsageProvider)new ClaudeOAuthProvider(p))
                     .Concat<IUsageProvider>([
                         new CursorLocalProvider(),
                         new CodexLocalProvider(),
                         new AntigravityProvider()
-                    ]),
+                    ])
+                    .ToList();
+
+            var store = new UsageStore(
+                providers,
                 preferences.DisconnectedProviders,
                 preferences.ProviderOrder);
             _store = store;
