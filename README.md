@@ -27,6 +27,14 @@ Hover a ring for its limit windows and when they reset. Claude's ring shows the
 same **current session** window Claude Code's own `/usage` leads with, so the
 two never disagree.
 
+> **About this fork**
+>
+> This fork adds a **WSL remote mode** to the Windows app: Quota Arc reads
+> quotas from [CodexBar](https://github.com/steipete/CodexBar) running inside
+> WSL, for coding assistants installed and signed in there. Setup guide:
+> [`docs/wsl-remote-mode.md`](docs/wsl-remote-mode.md). Upstream project:
+> [vaiibhavkale/Quota-Arc](https://github.com/vaiibhavkale/Quota-Arc).
+
 ## Windows
 
 The Windows app — WPF, branded Quota Arc — lives in [`windows/`](windows/README.md).
@@ -250,3 +258,9 @@ See [CONTRIBUTING.md](CONTRIBUTING.md).
 ## License
 
 [MIT](LICENSE) © 2026 Vaibhav
+
+Credits:
+
+- Upstream [Quota Arc](https://github.com/vaiibhavkale/Quota-Arc) by Vaibhav Kale (MIT).
+- [Codenotch](https://github.com/vinzdg/codenotch), the project Quota Arc builds on (MIT).
+- [CodexBar](https://github.com/steipete/CodexBar) by Peter Steinberger (MIT), used by the WSL remote mode.
