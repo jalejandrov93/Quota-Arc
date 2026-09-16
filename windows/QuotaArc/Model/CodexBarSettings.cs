@@ -11,7 +11,12 @@ internal sealed record CodexBarSettings(bool Enabled, Uri BaseUrl, IReadOnlyList
     public const string UrlKey = "codexbarUrl";
     public const string ProvidersKey = "codexbarProviders";
 
-    public static readonly Uri DefaultUrl = new("http://localhost:8787");
+    // 127.0.0.1, not localhost. Windows resolves localhost to ::1 first, while
+    // `codexbar serve` in WSL listens on IPv4 only, so a localhost request hangs
+    // until it times out instead of falling back — verified on a machine with
+    // mirrored networking, where 127.0.0.1:8787 answered in about 100 ms and
+    // localhost:8787 failed after 8 seconds.
+    public static readonly Uri DefaultUrl = new("http://127.0.0.1:8787");
     public static readonly IReadOnlyList<string> DefaultProviders =
         ["claude", "codex", "antigravity", "opencodego", "copilot"];
 

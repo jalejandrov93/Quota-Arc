@@ -274,7 +274,9 @@ public class CodexBarSettingsTests
     {
         var settings = CodexBarSettings.Resolve(envUrl: null, storedEnabled: false, storedUrl: null, storedProviders: null);
         Assert.False(settings.Enabled);
-        Assert.Equal(new Uri("http://localhost:8787"), settings.BaseUrl);
+        // 127.0.0.1, not localhost: Windows resolves localhost to ::1 first, and
+        // CodexBar in WSL listens on IPv4 only, so localhost hangs until timeout.
+        Assert.Equal(new Uri("http://127.0.0.1:8787"), settings.BaseUrl);
         Assert.Equal(new[] { "claude", "codex", "antigravity", "opencodego", "copilot" }, settings.ProviderIds);
     }
 
@@ -302,7 +304,7 @@ public class CodexBarSettingsTests
     {
         var settings = CodexBarSettings.Resolve(url, false, null, null);
         Assert.True(settings.Enabled);
-        Assert.Equal(new Uri("http://localhost:8787"), settings.BaseUrl);
+        Assert.Equal(new Uri("http://127.0.0.1:8787"), settings.BaseUrl);
     }
 
     [Fact]
