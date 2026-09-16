@@ -69,7 +69,7 @@ def parse_loops(block: str) -> list[list[tuple[float, float]]]:
 
 
 def emit(glyphs: dict[str, list[list[tuple[float, float]]]]) -> str:
-    names = ["claude", "openai", "third", "cursor", "gemini", "antigravity", "glm", "grok", "opencode"]
+    names = ["claude", "openai", "third", "cursor", "gemini", "antigravity", "glm", "grok", "opencode", "agenthub"]
     chunks = [
         "// Converted from Sources/Providers/GlyphOutline.swift. Do not edit by hand;",
         "// regenerate with windows/tools/convert_glyphs.py.",
@@ -106,7 +106,7 @@ def Pascal(name: str) -> str:
 
 def main() -> None:
     glyphs = parse(SRC.read_text(encoding="utf-8"))
-    missing = [n for n in ["claude", "openai", "third", "cursor", "gemini", "antigravity", "glm", "grok", "opencode"] if n not in glyphs]
+    missing = [n for n in ["claude", "openai", "third", "cursor", "gemini", "antigravity", "glm", "grok", "opencode", "agenthub"] if n not in glyphs]
     if missing:
         raise SystemExit(f"missing glyphs: {missing}")
     DST.parent.mkdir(parents=True, exist_ok=True)

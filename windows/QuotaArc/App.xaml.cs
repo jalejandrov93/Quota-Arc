@@ -75,6 +75,8 @@ public partial class App : Application
             Log.Info("claude profiles: " + string.Join(", ", profiles.Select(p => p.DisplayPath)));
 
             var codexBar = CodexBarSettings.Load();
+            var agentHub = new AgentHubProvider();
+
             var providers = codexBar.Enabled
                 ? RemoteUsageProvider.ForSettings(codexBar, TimeSpan.FromSeconds(2))
                 : profiles.Select(p => (IUsageProvider)new ClaudeOAuthProvider(p))
@@ -84,6 +86,12 @@ public partial class App : Application
                         new AntigravityProvider()
                     ])
                     .ToList();
+            // Agent Hub reports local agent activity, not a coding assistant's
+            // quota, so it is independent of where the quotas come from. It was
+            // only in the local branch, which left it out of remote mode — the
+            // exact setup (assistants in WSL, read through CodexBar) it exists
+            // for — while its SSE stream was still opened for nothing.
+            providers.Add(agentHub);
 
             var store = new UsageStore(
                 providers,
@@ -168,6 +176,9 @@ public partial class App : Application
             };
             store.Start();
             fleet.OnRefresh = () => _ = store.RefreshNowAsync();
+
+            agentHub.OnSseEvent = () => Dispatcher.Invoke(() => _ = store.RefreshProviderAsync(agentHub.Id));
+
             fleet.OnUnfold = () =>
             {
                 // Claude's token read and Antigravity's language-server bridge

@@ -12,7 +12,8 @@ internal enum ProviderGlyph
     Antigravity,
     Glm,
     Grok,
-    Opencode
+    Opencode,
+    Agenthub
 }
 
 internal static class ProviderGlyphInfo
@@ -26,6 +27,7 @@ internal static class ProviderGlyphInfo
         ProviderGlyph.Glm => 0.95,
         ProviderGlyph.Grok => 1.0,
         ProviderGlyph.Opencode => 0.95,
+        ProviderGlyph.Agenthub => 0.95,
         _ => 1.0
     };
 
@@ -39,6 +41,7 @@ internal static class ProviderGlyphInfo
         ProviderGlyph.Glm => GlyphOutline.Glm,
         ProviderGlyph.Grok => GlyphOutline.Grok,
         ProviderGlyph.Opencode => GlyphOutline.Opencode,
+        ProviderGlyph.Agenthub => GlyphOutline.Agenthub,
         _ => GlyphOutline.Third
     };
 

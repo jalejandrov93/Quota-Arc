@@ -38,9 +38,9 @@ A Release exe lands at `windows/QuotaArc/bin/Release/net8.0-windows/QuotaArc.exe
 ### Remote mode (CodexBar in WSL)
 
 If your coding assistants run inside WSL, Quota Arc can read their quotas from
-[CodexBar](https://github.com/steipete/CodexBar) serving on `http://localhost:8787`.
+[CodexBar](https://github.com/steipete/CodexBar) serving on `http://127.0.0.1:8787`.
 Install the server with `./wsl/install.sh` inside WSL, then turn remote mode on
-with `setx QUOTAARC_CODEXBAR_URL http://localhost:8787` or the `codexbarEnabled`
+with `setx QUOTAARC_CODEXBAR_URL http://127.0.0.1:8787` or the `codexbarEnabled`
 value under `HKCU\Software\QuotaArc`, and restart Quota Arc.
 Full guide: [`../docs/wsl-remote-mode.md`](../docs/wsl-remote-mode.md).
 
