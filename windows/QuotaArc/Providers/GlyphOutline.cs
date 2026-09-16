@@ -538,4 +538,16 @@ internal static class GlyphOutline
         ],
     ];
 
+    public static readonly Point[][] Agenthub =
+    [
+        [
+            new(0.1500, 0.1000), new(0.6200, 0.4400), new(0.1500, 0.7800),
+            new(0.1500, 0.6000), new(0.4400, 0.4400), new(0.1500, 0.2800)
+        ],
+        [
+            new(0.1500, 0.8400), new(0.7500, 0.8400), new(0.7500, 0.9600),
+            new(0.1500, 0.9600)
+        ],
+    ];
+
 }

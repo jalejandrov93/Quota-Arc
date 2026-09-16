@@ -530,6 +530,15 @@ enum GlyphOutline {
          CGPoint(x: 0.7500, y: 0.9600), CGPoint(x: 0.1500, y: 0.9600)]
     ]
 
+    /// Agent Hub mark, duplicating opencode for now to get a mark on screen.
+    static let agenthub: [[CGPoint]] = [
+        [CGPoint(x: 0.1500, y: 0.1000), CGPoint(x: 0.6200, y: 0.4400),
+         CGPoint(x: 0.1500, y: 0.7800), CGPoint(x: 0.1500, y: 0.6000),
+         CGPoint(x: 0.4400, y: 0.4400), CGPoint(x: 0.1500, y: 0.2800)],
+        [CGPoint(x: 0.1500, y: 0.8400), CGPoint(x: 0.7500, y: 0.8400),
+         CGPoint(x: 0.7500, y: 0.9600), CGPoint(x: 0.1500, y: 0.9600)]
+    ]
+
     /// GitHub Copilot's own mark, traced from its icon.
     static let copilot: [[CGPoint]] = [
         [
