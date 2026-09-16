@@ -83,10 +83,15 @@ public partial class App : Application
                     .Concat<IUsageProvider>([
                         new CursorLocalProvider(),
                         new CodexLocalProvider(),
-                        new AntigravityProvider(),
-                        agentHub
+                        new AntigravityProvider()
                     ])
                     .ToList();
+            // Agent Hub reports local agent activity, not a coding assistant's
+            // quota, so it is independent of where the quotas come from. It was
+            // only in the local branch, which left it out of remote mode — the
+            // exact setup (assistants in WSL, read through CodexBar) it exists
+            // for — while its SSE stream was still opened for nothing.
+            providers.Add(agentHub);
 
             var store = new UsageStore(
                 providers,

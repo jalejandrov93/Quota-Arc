@@ -34,7 +34,7 @@ public class AgentHubProviderTests : IDisposable
     public async Task HealthyResponse_DrawsConcurrencyAndNoBlocks()
     {
         var stateJson = """{"agents":[{"agent":"agy","model":"gpt-4o","status":"ready"}],"jobs":[{"jobId":"j1","agent":"agy","status":"running"},{"jobId":"j2","agent":"agy","status":"queued"}]}""";
-        var configJson = """{"breakerState":"closed","overrides":{}}""";
+        var configJson = """{"breakerState":[{"agent":"agy","model":"gemini-3.8-flash-low","open":false}],"overrides":{}}""";
 
         AgentHubProvider.Http = new HttpClient(new FakeHandler(req =>
         {
@@ -61,7 +61,7 @@ public class AgentHubProviderTests : IDisposable
     public async Task OpenBreaker_MapsToBlock()
     {
         var stateJson = """{"agents":[],"jobs":[]}""";
-        var configJson = """{"breakerState":"open"}""";
+        var configJson = """{"breakerState":[{"agent":"agy","model":"gemini-3.8-flash-low","open":true}]}""";
 
         AgentHubProvider.Http = new HttpClient(new FakeHandler(req =>
         {
@@ -81,7 +81,7 @@ public class AgentHubProviderTests : IDisposable
     public async Task DegradedAgent_MapsToErrorStatus()
     {
         var stateJson = """{"agents":[{"agent":"agy","model":"gpt-4o","status":"degraded"}],"jobs":[]}""";
-        var configJson = """{"breakerState":"closed"}""";
+        var configJson = """{"breakerState":[{"agent":"agy","model":"gemini-3.8-flash-low","open":false}]}""";
 
         AgentHubProvider.Http = new HttpClient(new FakeHandler(req =>
         {

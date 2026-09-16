@@ -98,11 +98,19 @@ internal sealed class AgentHubProvider : IUsageProvider
             };
 
             UsageBlock? block = null;
-            if (config.BreakerState == "open")
+            var openBreakers = config.BreakerState?.Count(b => b.Open) ?? 0;
+            // An override is keyed "agent:model" and can be a breaker reset as
+            // well as a hold; only a hold means a human shut the door.
+            var held = config.Overrides is { ValueKind: JsonValueKind.Object } overrides
+                && overrides.EnumerateObject().Any(o =>
+                    o.Value.ValueKind == JsonValueKind.Object
+                    && o.Value.TryGetProperty("hold", out var hold)
+                    && hold.ValueKind == JsonValueKind.True);
+            if (openBreakers > 0)
             {
-                block = new UsageBlock("Circuit breaker open", null);
+                block = new UsageBlock(openBreakers == 1 ? "Circuit breaker open" : $"{openBreakers} circuit breakers open", null);
             }
-            else if (config.Overrides?.ValueKind == JsonValueKind.Object && config.Overrides.Value.EnumerateObject().Any())
+            else if (held)
             {
                 block = new UsageBlock("Agent held by human", null);
             }
@@ -153,7 +161,16 @@ internal sealed record AgentHubJob(
     [property: JsonPropertyName("status")] string? Status
 );
 
+// Agent Hub reports one circuit breaker per agent/model pair, not a single
+// hub-wide flag. Declaring it as a string made System.Text.Json throw on every
+// real /api/config response, so the cell only ever showed a bad response.
+internal sealed record AgentHubBreaker(
+    [property: JsonPropertyName("agent")] string? Agent,
+    [property: JsonPropertyName("model")] string? Model,
+    [property: JsonPropertyName("open")] bool Open
+);
+
 internal sealed record AgentHubConfig(
-    [property: JsonPropertyName("breakerState")] string? BreakerState,
+    [property: JsonPropertyName("breakerState")] AgentHubBreaker[]? BreakerState,
     [property: JsonPropertyName("overrides")] JsonElement? Overrides
 );
