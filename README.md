@@ -62,6 +62,7 @@ See [`windows/README.md`](windows/README.md) for local build and install steps.
 | **Grok** | official | The Grok CLI session in `~/.grok/auth.json`, against the same credits billing endpoint `/usage` uses. |
 | **OpenCode** | official | The Go plan's official usage endpoint, with the `opencode-go` key OpenCode itself stores on sign-in. |
 | **GitHub Copilot** | official | GitHub's Copilot quota endpoint, authenticated with the GitHub CLI session already on the Mac (`gh auth login`). |
+| **Agent Hub** (Windows) | derived | A local [agent-hub](https://github.com/jalejandrov93/agent-hub) dashboard on `http://127.0.0.1:7777`: coding-agent jobs running and queued, circuit breakers and human holds. Not a usage quota, so it shows a count rather than a ring. See [`docs/wsl-remote-mode.md`](docs/wsl-remote-mode.md#agent-hub-cell). |
 
 Quota Arc never signs in anywhere. Every reading is borrowed from a credential
 or session a tool on your Mac or PC already holds — install and sign in to any of
