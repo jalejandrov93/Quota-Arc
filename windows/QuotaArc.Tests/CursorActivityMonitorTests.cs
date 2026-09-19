@@ -287,4 +287,38 @@ public class CursorActivityMonitorTests
         }
         return path;
     }
+
+    /// The bug this exists to stop: Cursor's real `state.vscdb` no longer has
+    /// a `composerHeaders` table at all — only `ItemTable` and
+    /// `cursorDiskKV` — so the query behind `Read` threw on every launch and
+    /// the notch never got past `RefreshSessions()`. This fixture is the
+    /// counterpart to `MakeStore` above with the one table it always creates
+    /// left out.
+    [Fact]
+    public void ReadReturnsEmptyWhenComposerHeadersTableIsMissing()
+    {
+        var path = MakeStoreWithoutComposerHeaders();
+        try
+        {
+            var found = CursorActivityMonitor.Read(path, DistantPast, TimeSpan.FromMinutes(10));
+            Assert.Empty(found);
+        }
+        finally
+        {
+            SqliteConnection.ClearAllPools();
+            try { File.Delete(path); } catch (IOException) { /* AV or a lingering handle; harmless in %TEMP% */ }
+        }
+    }
+
+    private static string MakeStoreWithoutComposerHeaders()
+    {
+        var path = Path.Combine(Path.GetTempPath(), $"cursor-missing-{Guid.NewGuid()}.sqlite");
+        var connectionString = new SqliteConnectionStringBuilder { DataSource = path, Pooling = false }.ToString();
+        using var db = new SqliteConnection(connectionString);
+        db.Open();
+        using var create = db.CreateCommand();
+        create.CommandText = "CREATE TABLE ItemTable (key TEXT, value TEXT)";
+        create.ExecuteNonQuery();
+        return path;
+    }
 }

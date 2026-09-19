@@ -40,16 +40,28 @@ internal static class SqliteStore
 
     /// The multi-row counterpart to `Scalar`, for a query that returns one
     /// text column per row — `composerHeaders.value`, in practice.
+    ///
+    /// A caller's schema is not ours to guarantee: Cursor has already changed
+    /// this table's shape once (`composerHeaders` disappeared entirely on a
+    /// schema migration), so a failed query is treated the same as "nothing
+    /// found" rather than allowed to take the caller down with it.
     public static List<string> Rows(SqliteConnection db, string sql)
     {
-        using var cmd = db.CreateCommand();
-        cmd.CommandText = sql;
-        using var reader = cmd.ExecuteReader();
-        var values = new List<string>();
-        while (reader.Read())
+        try
         {
-            if (!reader.IsDBNull(0)) values.Add(reader.GetString(0));
+            using var cmd = db.CreateCommand();
+            cmd.CommandText = sql;
+            using var reader = cmd.ExecuteReader();
+            var values = new List<string>();
+            while (reader.Read())
+            {
+                if (!reader.IsDBNull(0)) values.Add(reader.GetString(0));
+            }
+            return values;
         }
-        return values;
+        catch
+        {
+            return [];
+        }
     }
 }
