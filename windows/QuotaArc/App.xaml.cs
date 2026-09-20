@@ -65,6 +65,17 @@ public partial class App : Application
         fleet.Apply(preferences.DisplayPreference);
         fleet.Apply(preferences.NotchVisibility);
 
+        // The notch is the app's primary UI; everything below this line is
+        // optional telemetry from third-party tools (Cursor, Codex, Claude,
+        // Antigravity) whose on-disk formats we do not control — Cursor
+        // already changed its schema out from under CursorActivityMonitor
+        // once. Showing the notch here means it can never be held hostage by
+        // a provider failing to initialize, no matter what still throws
+        // below. `OnQuit` is wired first because `Show()` can already make
+        // the tray's/notch's own quit path reachable.
+        fleet.OnQuit = Shutdown;
+        fleet.Show();
+
         if (Environment.GetEnvironmentVariable("QUOTAARC_DEMO") == "1")
         {
             fleet.SetSnapshots(Fixtures.Snapshots());
@@ -209,8 +220,6 @@ public partial class App : Application
                 Dispatcher.InvokeAsync(() => ShowHub());
         }
 
-        fleet.OnQuit = Shutdown;
-        fleet.Show();
         base.OnStartup(e);
     }
 
@@ -281,8 +290,18 @@ public partial class App : Application
     {
         if (_fleet is null) return;
         var next = new Dictionary<string, List<AgentSession>>();
+        // One monitor's provider can change its on-disk schema out from under
+        // us at any time — Cursor already has — so a single broken monitor
+        // must not cost every other provider its row on this tick.
         foreach (var (id, read) in _monitors)
-            next[id] = read();
+        {
+            try { next[id] = read(); }
+            catch (Exception ex)
+            {
+                Log.Error($"session monitor '{id}': {ex.Message}");
+                next[id] = [];
+            }
+        }
         _fleet.SetSessions(next);
         AnnounceCompletions(next);
         var stamp = ClaudeDesktop.HistoryStamp();
