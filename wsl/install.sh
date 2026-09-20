@@ -6,7 +6,7 @@
 # token. It never calls sudo; the system unit step prints the commands to run.
 set -euo pipefail
 
-readonly DEFAULT_VERSION="0.60.3"
+readonly DEFAULT_VERSION="0.62.0"
 readonly RELEASES_URL="https://github.com/steipete/CodexBar/releases/download"
 
 usage() {
@@ -30,7 +30,7 @@ Options:
   -h, --help     Show this help and exit.
 
 Environment:
-  CODEXBAR_VERSION   CodexBar release to install (default: 0.60.3).
+  CODEXBAR_VERSION   CodexBar release to install (default: 0.62.0).
   CODEXBAR_LIBC      glibc (default) or musl.
 EOF
 }
